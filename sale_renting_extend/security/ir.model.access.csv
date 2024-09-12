@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+sale_renting_extend.access_out_of_service_reason,access_out_of_service_reason,sale_renting_extend.model_out_of_service_reason,base.group_user,1,1,1,1
+sale_renting_extend.access_rental_out_of_service,access_rental_out_of_service,sale_renting_extend.model_rental_out_of_service,base.group_user,1,1,1,1
+sale_renting_extend.access_service_records,access_service_records,sale_renting_extend.model_service_records,base.group_user,1,1,1,1
+access_custom_pricelist,access_custom_pricelist,model_custom_pricelist,base.group_user,1,1,1,1

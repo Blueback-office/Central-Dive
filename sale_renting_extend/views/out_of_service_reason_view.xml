@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="out_of_service_reason_tree_view" model="ir.ui.view">
+        <field name="name">Out Of Service Reason Tree View</field>
+        <field name="model">out.of.service.reason</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name = "reason"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="out_of_service_reason_form_view" model="ir.ui.view">
+        <field name="name">Out Of Service Reason Form View</field>
+        <field name="model">out.of.service.reason</field>
+        <field name="arch" type="xml">
+             <form>
+                <sheet>
+                    <group>
+                        <field name = "reason" required = "1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="out_of_service_action" model="ir.actions.act_window">
+        <field name="name">Out Of Service Reason</field>
+        <field name="res_model">out.of.service.reason</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_out_of_service_reason" name="Out Of Service Reason" parent="sale_renting.menu_rental_config" action="out_of_service_action" sequence="10"/>
+
+</odoo>

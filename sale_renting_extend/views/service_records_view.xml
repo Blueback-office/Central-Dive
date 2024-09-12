@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="service_record_tree_view" model="ir.ui.view">
+        <field name="name">Service Record Tree View</field>
+        <field name="model">service.records</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name = "product_tmp_id"/>
+                <field name = "reason_id"/>
+                <field name = "date_from"/>
+                <field name = "date_to"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="service_records_form_view" model="ir.ui.view">
+        <field name="name">Service Records Form View</field>
+        <field name="model">service.records</field>
+        <field name="arch" type="xml">
+             <form>
+                <sheet>
+                    <group>
+                        <field name = "product_tmp_id"/>
+                        <field name="product_id" />
+                        <field name = "reason_id"/>
+                        <field name = "date_from"/>
+                        <field name = "date_to"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+     <record id="action_service_record_tree" model="ir.actions.act_window">
+        <field name="name">Service Records</field>
+        <field name="res_model">service.records</field>
+        <field name="view_mode">tree</field>
+        <field name="view_id" ref="service_record_tree_view"/>
+        <field name="context">{}</field>
+    </record>
+</odoo>
