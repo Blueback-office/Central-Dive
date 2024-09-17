@@ -1,5 +1,5 @@
 from odoo import models, fields, api, _
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError, UserError
 
 
 class RentalOutOfService(models.TransientModel):
@@ -26,7 +26,21 @@ class RentalOutOfService(models.TransientModel):
         return res
 
     def action_confirm(self):
-        self.env["service.records"].create(
+        service_records_obj = self.env["service.records"]
+        existing_service_records = service_records_obj.search(
+            [("product_tmp_id", "=", self.product_tmp_id.id)]
+        )
+        for existing_service in existing_service_records:
+            if existing_service.date_from.date() == self.date_from.date():
+                raise UserError(
+                    _(
+                        "Service Record is already create for {}!".format(
+                            self.product_tmp_id.name
+                        )
+                    )
+                )
+
+        service_record = service_records_obj.create(
             {
                 "product_tmp_id": self.product_tmp_id.id,
                 "product_id": self.product_tmp_id.product_variant_id.id,
@@ -35,4 +49,4 @@ class RentalOutOfService(models.TransientModel):
                 "date_to": self.date_to,
             }
         )
-        return True
+        return service_record
