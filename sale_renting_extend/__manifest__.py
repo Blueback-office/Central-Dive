@@ -15,6 +15,7 @@
         "views/out_of_service_reason_view.xml",
         "views/product_template_view.xml",
         "views/service_records_view.xml",
+        "views/sale_order_line_views.xml",
     ],
     "installable": True,
 }

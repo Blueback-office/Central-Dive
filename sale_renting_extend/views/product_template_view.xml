@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <odoo>
-	<record id="out_of_service_product_template_form" model="ir.ui.view">
+    <record id="out_of_service_product_template_form" model="ir.ui.view">
         <field name="name">Product Template</field>
         <field name="model">product.template</field>
         <field name="inherit_id" ref="product.product_template_form_view"/>
         <field name="arch" type="xml">
-        	<xpath expr = "//header/button" position = "after">
-        		<button name="action_out_of_service"
+            <xpath expr = "//header/button" position = "after">
+                <button name="action_out_of_service"
                     type="object"
                     context="{'default_product_tmp_id': active_id}"
                     string="Out of Service"
