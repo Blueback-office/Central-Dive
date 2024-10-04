@@ -47,8 +47,15 @@ class Base(models.AbstractModel):
             sum(sol.qty_returned / u.factor * u2.factor) as qty_returned
         ,
             s.date_order as order_date,
-            sol.line_start_date as pickup_date,
-            sol.line_end_date as return_date,
+            CASE
+                WHEN s.is_multi_line_booking THEN sol.line_start_date
+            ELSE s.rental_start_date
+            END AS pickup_date
+        ,
+            CASE 
+                WHEN s.is_multi_line_booking THEN sol.line_end_date
+            ELSE s.rental_return_date
+            END AS return_date,
             s.state as state,
             s.rental_status as rental_status,
             s.partner_id as partner_id,
@@ -86,7 +93,6 @@ class Base(models.AbstractModel):
                 WHEN sol.qty_delivered = sol.product_uom_qty THEN 2
             ELSE 4
             END as color
-        
         
                 FROM 
             sale_order_line sol
@@ -132,8 +138,7 @@ SELECT 1000000 + ROW_NUMBER() OVER (ORDER BY sol.date_from) as id,
             
             0 as product_uom_qty,
             0 as qty_delivered,
-            0 as qty_returned
-        ,
+            0 as qty_returned,
             sol.create_date as order_date,
             sol.date_from as pickup_date,
             sol.date_to as return_date,
@@ -154,27 +159,27 @@ SELECT 1000000 + ROW_NUMBER() OVER (ORDER BY sol.date_from) as id,
             null as order_id,
             null as order_line_id,
             'reserved' as report_line_status,
-			False as late,
+            False as late,
             4 as color
         
         
                 FROM 
-            	service_records sol
-				left join product_product p on (sol.product_id=p.id)
+                service_records sol
+                left join product_product p on (sol.product_id=p.id)
                 left join out_of_service_reason out on (sol.reason_id=out.id)
                 left join product_template t on (p.product_tmpl_id=t.id)
                 left join uom_uom u2 on (u2.id=t.uom_id)
                 WHERE sol.product_id IS NOT NULL
                 GROUP BY 
-	            sol.product_id,
-	            t.uom_id,
-	            t.categ_id,
-	            t.name,
-	            sol.create_date,
-	            sol.date_from,
-	            sol.date_to,
-	            p.product_tmpl_id,
-				sol.id,
+                sol.product_id,
+                t.uom_id,
+                t.categ_id,
+                t.name,
+                sol.create_date,
+                sol.date_from,
+                sol.date_to,
+                p.product_tmpl_id,
+                sol.id,
                 sol.company_id,
                 out.reason
 	            """
