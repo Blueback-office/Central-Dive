@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- sale_renting.rental_order_form_view -->
+    <record id="rental_order_form_view_inherit_so" model="ir.ui.view">
+        <field name="name">rental.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='payment_term_id']" position="after">
+                <field name="is_multi_line_booking" />
+            </xpath>
+        </field>
+    </record>
+
+    <record id="rental_order_primary_form_view_inherit_sol" model="ir.ui.view">
+        <field name="name">rental.order.form</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_renting.rental_order_primary_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='order_line']//tree//field[@name='price_unit']" position="after">
+                <field name="line_start_date" column_invisible="not parent.is_multi_line_booking" required = "parent.is_multi_line_booking"/>
+                <field name="line_end_date" column_invisible="not parent.is_multi_line_booking" required = "parent.is_multi_line_booking" />
+                <field name="duration" column_invisible="not parent.is_multi_line_booking" force_save="1"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

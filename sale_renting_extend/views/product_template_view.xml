@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="out_of_service_product_template_form" model="ir.ui.view">
+        <field name="name">Product Template</field>
+        <field name="model">product.template</field>
+        <field name="inherit_id" ref="product.product_template_form_view"/>
+        <field name="arch" type="xml">
+            <xpath expr = "//header/button" position = "after">
+                <button name="action_out_of_service"
+                    type="object"
+                    context="{'default_product_tmp_id': active_id}"
+                    string="Out of Service"
+                    invisible = "rent_ok  == False"/>
+            </xpath>
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_out_of_service_records"
+                    class="oe_stat_button"
+                    icon="fa-file-text"
+                    string = "Service Records"
+                    type="object">
+                </button>
+            </xpath>
+            <page name="pricing" position="inside">
+                <group>
+                    <field name="use_custom_rental_price"/>
+                    <field name="custom_pricelist_ids" invisible="not use_custom_rental_price">
+                        <tree editable="bottom">
+                            <field name="date_from"/>
+                            <field name="date_to"/>
+                            <field name="price"/>
+                            <field name="product_template_id" column_invisible="True"/>
+                        </tree>
+                    </field>
+                </group>
+            </page>
+        </field>
+    </record>
+</odoo>

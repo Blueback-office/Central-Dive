@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_rental_out_of_service_wizard_form" model="ir.ui.view">
+        <field name="name">rental.out.of.service.wizard.form</field>
+        <field name="model">rental.out.of.service</field>
+        <field name="arch" type="xml">
+            <form string="Rental Out of Service">
+                <group>
+                    <group>
+                        <field name = "product_tmp_id" readonly="True"/>
+                        <field name = "reason_id" options='{"no_create": True}' required = "True"/>
+                        <field name = "date_from" required = "True"/>
+                        <field name = "date_to" required = "True"/>
+                    </group>
+                </group>
+                <footer>
+                    <button string="Create" type="object" name="action_confirm" class="btn-primary"/>
+                    <button string="Discard" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_rental_out_of_servicre_wizard" model="ir.actions.act_window">
+        <field name="name">Rental Out Of Service</field>
+        <field name="res_model">rental.out.of.service</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="view_rental_out_of_service_wizard_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>
