@@ -17,6 +17,12 @@ class ProductTemplate(models.Model):
         auto_join=True,
         copy=True,
     )
+    per_day_price = fields.Float(
+        "Per Day Price", help="Valid Upto 6 Days and Non-Sessional Days"
+    )
+    morethan_6day_price = fields.Float(
+        "Six(6)+ Days Price", help="Valid Morethan 6 Days and Non-Sessional Days"
+    )
 
     def action_out_of_service(self):
         return {

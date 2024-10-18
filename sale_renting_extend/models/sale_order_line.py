@@ -107,17 +107,33 @@ class SaleOrderLine(models.Model):
                 and line.line_end_date
             ):
                 price = self.product_id.lst_price
-                st_duration = abs(
-                    (line.line_end_date.date() - line.line_start_date.date()).days
+                start_date = line.line_start_date
+                end_date = line.line_end_date
+                custom_pricelist_ids = line.product_id.custom_pricelist_ids.filtered(
+                    lambda line: start_date.date() <= line.date_to
+                    and end_date.date() >= line.date_from
                 )
-                st_date = self.product_id.custom_pricelist_ids.filtered(
-                    lambda x: x.date_to >= self.line_start_date.date() >= x.date_from
-                )
-                ed_date = self.product_id.custom_pricelist_ids.filtered(
-                    lambda x: x.date_to >= self.line_end_date.date() >= x.date_from
-                )
-                if st_date and ed_date and st_date[0].id == ed_date[0].id:
-                    price = st_duration * st_date[0].price
+                falling_days_total = 0
+                total_days_user = (end_date.date() - start_date.date()).days + 1
+                overlapping_ranges = []
+                for price_list in line.product_id.custom_pricelist_ids:
+                    overlap_start = max(start_date.date(), price_list.date_from)
+                    overlap_end = min(end_date.date(), price_list.date_to)
+                    if overlap_end >= overlap_start:
+                        falling_days = (overlap_end - overlap_start).days + 1
+                        falling_days_total += falling_days
+                        overlapping_ranges.append(
+                            {"range": price_list, "falling_days": falling_days}
+                        )
+                non_falling_days_total = total_days_user - falling_days_total
+                if non_falling_days_total <= 6 and line.product_id.per_day_price:
+                    price = non_falling_days_total * line.product_id.per_day_price
+                elif non_falling_days_total > 6 and line.product_id.morethan_6day_price:
+                    price = non_falling_days_total * line.product_id.morethan_6day_price
+
+                for value in overlapping_ranges:
+                    price += value.get("range").price * value.get("falling_days")
+
                 line.price_unit = line.product_id._get_tax_included_unit_price_from_price(
                     price,
                     line.currency_id or line.order_id.currency_id,

@@ -22,15 +22,23 @@
             </xpath>
             <page name="pricing" position="inside">
                 <group>
-                    <field name="use_custom_rental_price"/>
-                    <field name="custom_pricelist_ids" invisible="not use_custom_rental_price">
-                        <tree editable="bottom">
-                            <field name="date_from"/>
-                            <field name="date_to"/>
-                            <field name="price"/>
-                            <field name="product_template_id" column_invisible="True"/>
-                        </tree>
-                    </field>
+                    <field name="use_custom_rental_price" string="Use Custom Pricelist"/>
+                </group>
+                <group invisible="not use_custom_rental_price">
+                    <group name="day_pricing" string="Day Pricing">
+                        <field name="per_day_price" widget="monetary"/>
+                        <field name="morethan_6day_price" widget="monetary"/>
+                    </group>
+                    <group name="sessional" string="Sessional Pricing">
+                        <field name="custom_pricelist_ids" invisible="not use_custom_rental_price"  nolabel="1" colspan="2" >
+                            <tree editable="bottom">
+                                <field name="date_from"/>
+                                <field name="date_to" />
+                                <field name="price" widget="monetary"/>
+                                <field name="product_template_id" column_invisible="True"/>
+                            </tree>
+                        </field>
+                    </group>
                 </group>
             </page>
         </field>

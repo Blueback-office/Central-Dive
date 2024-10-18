@@ -54,27 +54,31 @@ class PriceList(models.Model):
                     duration = pricing.recurrence_id.duration
 
                 if product.use_custom_rental_price and start_date and end_date:
-                    st_duration = abs((end_date - start_date).days)
-                    st_date = product.custom_pricelist_ids.filtered(
-                        lambda x: x.date_to >= start_date.date() >= x.date_from
+                    custom_pricelist_ids = product.custom_pricelist_ids.filtered(
+                        lambda line: start_date.date() <= line.date_to
+                        and end_date.date() >= line.date_from
                     )
-                    ed_date = product.custom_pricelist_ids.filtered(
-                        lambda x: x.date_to >= end_date.date() >= x.date_from
-                    )
-                    if st_date and ed_date and st_date[0].id == ed_date[0].id:
-                        price = st_duration * st_date[0].price
-                    elif st_date and ed_date and st_date[0].id != ed_date[0].id:
-                        rem_duration = (st_date[0].date_to - start_date.date()).days
-                        price = rem_duration * st_date[0].price
-                        price = (st_duration - rem_duration) * ed_date[0].price + price
-                    elif pricing:
-                        price = pricing._compute_price(
-                            duration, pricing.recurrence_id.unit
-                        )
-                    elif product._name == "product.product":
-                        price = product.lst_price
-                    else:
-                        price = product.list_price
+                    falling_days_total = 0
+                    total_days_user = (end_date.date() - start_date.date()).days + 1
+                    overlapping_ranges = []
+                    price = product.lst_price
+                    for price_list in product.custom_pricelist_ids:
+                        overlap_start = max(start_date.date(), price_list.date_from)
+                        overlap_end = min(end_date.date(), price_list.date_to)
+                        if overlap_end >= overlap_start:
+                            falling_days = (overlap_end - overlap_start).days + 1
+                            falling_days_total += falling_days
+                            overlapping_ranges.append(
+                                {"range": price_list, "falling_days": falling_days}
+                            )
+                    non_falling_days_total = total_days_user - falling_days_total
+                    if non_falling_days_total <= 6 and product.per_day_price:
+                        price = non_falling_days_total * product.per_day_price
+                    elif non_falling_days_total > 6 and product.morethan_6day_price:
+                        price = non_falling_days_total * product.morethan_6day_price
+
+                    for value in overlapping_ranges:
+                        price += value.get("range").price * value.get("falling_days")
 
                 elif pricing:
                     price = pricing._compute_price(duration, pricing.recurrence_id.unit)
